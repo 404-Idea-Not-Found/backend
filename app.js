@@ -2,6 +2,7 @@ require("dotenv").config();
 if (process.env.NODE_ENV !== "test") {
   require("./config/mongoose");
 }
+require("./config/firebase");
 
 const path = require("path");
 
@@ -11,8 +12,8 @@ const express = require("express");
 const helmet = require("helmet");
 const logger = require("morgan");
 
+const authRouter = require("./routes/auth");
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
 
 const corsOptions = {
   origin: process.env.CLIENT_URL,
@@ -30,6 +31,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/auth", authRouter);
+
+app.use(function (error, req, res, next) {
+  res.status(error.status || 500);
+  res.json({
+    result: error.result,
+    errorMessage: error.message,
+  });
+});
 
 module.exports = app;
