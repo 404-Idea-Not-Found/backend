@@ -3,10 +3,10 @@ const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
 
 exports.sendMeetingList = async (req, res, next) => {
-  const { lastId } = req.params;
+  const { query, lastId } = req.query;
 
   try {
-    const meetingList = await getMeetingList(lastId);
+    const meetingList = await getMeetingList(query, lastId);
 
     res.json({
       result: RESPONSE_RESULT.OK,
