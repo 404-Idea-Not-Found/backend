@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 const mongoose = require("mongoose");
 
 const chatSchema = new mongoose.Schema({
@@ -37,8 +38,15 @@ const meetingSchema = new mongoose.Schema({
     required: true,
   },
   reservation: {
-    type: [mongoose.ObjectId],
-    ref: "User",
+    type: [
+      {
+        type: String,
+        match: [
+          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+          "Failed to validate email address",
+        ],
+      },
+    ],
     default: [],
   },
   colleague: {

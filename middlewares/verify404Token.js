@@ -21,7 +21,7 @@ const verify404Token = async (req, res, next) => {
 
   try {
     const { id } = await jwt.verify(fourOFourToken, process.env.JWT_SECRET);
-    const user = await User.findById(id);
+    const user = await User.findById(id).lean();
 
     if (!user) {
       next(
@@ -34,6 +34,7 @@ const verify404Token = async (req, res, next) => {
       );
     }
 
+    user.fourOFourToken = fourOFourToken;
     req.userInfo = user;
 
     next();

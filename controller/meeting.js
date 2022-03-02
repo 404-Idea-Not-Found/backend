@@ -1,3 +1,4 @@
+const { createMailJob } = require("../api/mailJobAPI");
 const {
   getMeetingList,
   getMeeting,
@@ -7,6 +8,7 @@ const {
 } = require("../service/meeting");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
+const getErrorMessage = require("../utils/getErrorMessage");
 
 exports.sendMeetingList = async (req, res, next) => {
   const { query, lastId } = req.query;
@@ -54,23 +56,24 @@ exports.sendMeeting = async (req, res, next) => {
 
 exports.createNewMeeting = async (req, res, next) => {
   const { meetingData } = req.body;
+  const { fourOFourToken } = req.userInfo;
 
   try {
     const createdMeeting = await createMeeting(req.userInfo._id, meetingData);
+    await createMailJob(
+      createdMeeting._id,
+      createdMeeting.startTime,
+      fourOFourToken
+    );
 
     res.json({
       result: RESPONSE_RESULT.OK,
       createdMeeting,
     });
   } catch (error) {
-    next(
-      new ErrorWithStatus(
-        error,
-        500,
-        RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
-      )
-    );
+    const errorMessage = getErrorMessage(error);
+
+    next(new ErrorWithStatus(error, 500, RESPONSE_RESULT.ERROR, errorMessage));
   }
 };
 
@@ -78,7 +81,7 @@ exports.reserveMeeting = async (req, res, next) => {
   const { meetingId } = req.params;
 
   try {
-    await addUserReservation(req.userInfo._id, meetingId);
+    await addUserReservation(req.userInfo.email, meetingId);
 
     res.json({
       result: RESPONSE_RESULT.OK,
@@ -99,7 +102,7 @@ exports.cancelReservation = async (req, res, next) => {
   const { meetingId } = req.params;
 
   try {
-    await removeUserReservation(req.userInfo._id, meetingId);
+    await removeUserReservation(req.userInfo.email, meetingId);
 
     res.json({
       result: RESPONSE_RESULT.OK,
