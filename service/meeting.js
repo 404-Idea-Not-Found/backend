@@ -26,3 +26,7 @@ exports.getMeetingList = async (query, lastId) => {
     .select("-reservation -chatList -doodle -description")
     .limit(10);
 };
+
+exports.getMeeting = async (meetingId) => {
+  return await Meeting.findById(meetingId);
+};
