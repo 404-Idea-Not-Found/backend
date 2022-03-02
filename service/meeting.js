@@ -30,3 +30,16 @@ exports.getMeetingList = async (query, lastId) => {
 exports.getMeeting = async (meetingId) => {
   return await Meeting.findById(meetingId);
 };
+
+exports.createMeeting = async (userId, meetingData) => {
+  const { title, tag, description, recruitmentNumber, startTime } = meetingData;
+
+  return await Meeting.create({
+    title,
+    tag,
+    description,
+    owner: userId,
+    recruitmentNumber,
+    startTime,
+  });
+};
