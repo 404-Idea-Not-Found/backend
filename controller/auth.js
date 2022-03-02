@@ -26,6 +26,7 @@ exports.googleAuth = async (req, res, next) => {
       username: user.username,
       email: user.email,
       profilePicture: user.profilePicture,
+      _id: user._id,
     });
   } catch (error) {
     next(

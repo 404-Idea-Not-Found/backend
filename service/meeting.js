@@ -43,3 +43,15 @@ exports.createMeeting = async (userId, meetingData) => {
     startTime,
   });
 };
+
+exports.addUserReservation = async (userId, meetingId) => {
+  await Meeting.findByIdAndUpdate(meetingId, {
+    $addToSet: { reservation: userId },
+  });
+};
+
+exports.removeUserReservation = async (userId, meetingId) => {
+  await Meeting.findByIdAndUpdate(meetingId, {
+    $pull: { reservation: userId },
+  });
+};
