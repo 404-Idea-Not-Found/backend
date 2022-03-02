@@ -14,6 +14,7 @@ const logger = require("morgan");
 
 const authRouter = require("./routes/auth");
 const indexRouter = require("./routes/index");
+const meetingRouter = require("./routes/meeting");
 
 const corsOptions = {
   origin: process.env.CLIENT_URL,
@@ -32,6 +33,7 @@ app.use(cors(corsOptions));
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
+app.use("/meeting", meetingRouter);
 
 app.use(function (error, req, res, next) {
   res.status(error.status || 500);
