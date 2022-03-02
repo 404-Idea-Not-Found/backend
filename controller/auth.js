@@ -41,6 +41,7 @@ exports.googleAuth = async (req, res, next) => {
 
 exports.sendVerified = (req, res, next) => {
   res.json({
+    _id: req.userInfo._id,
     result: RESPONSE_RESULT.TOKEN_VERIFIED,
     username: req.userInfo.username,
     email: req.userInfo.email,
