@@ -37,6 +37,9 @@ const meetingSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  ownerSocketId: {
+    type: String,
+  },
   reservation: {
     type: [
       {

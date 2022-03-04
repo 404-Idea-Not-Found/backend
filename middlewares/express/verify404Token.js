@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
-const User = require("../model/User");
-const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
-const ErrorWithStatus = require("../utils/ErrorwithStatus");
+const User = require("../../model/User");
+const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../../utils/constants");
+const ErrorWithStatus = require("../../utils/ErrorwithStatus");
 
 const verify404Token = async (req, res, next) => {
-  const { fourOFourToken } = req.cookies;
+  const { authorization } = req.headers;
 
-  if (!fourOFourToken) {
+  if (!authorization) {
     next(
       new ErrorWithStatus(
         null,
@@ -17,6 +17,23 @@ const verify404Token = async (req, res, next) => {
         ERROR_MESSAGES.FAILED_TO_GET_404_TOKEN
       )
     );
+
+    return;
+  }
+
+  const [prefix, fourOFourToken] = authorization.split(" ");
+
+  if (prefix !== "Bearer" || !fourOFourToken) {
+    next(
+      new ErrorWithStatus(
+        null,
+        400,
+        RESPONSE_RESULT.NO_TOKEN,
+        ERROR_MESSAGES.FAILED_TO_GET_404_TOKEN
+      )
+    );
+
+    return;
   }
 
   try {
@@ -32,6 +49,8 @@ const verify404Token = async (req, res, next) => {
           ERROR_MESSAGES.FAILED_TO_GET_USER
         )
       );
+
+      return;
     }
 
     user.fourOFourToken = fourOFourToken;

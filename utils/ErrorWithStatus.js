@@ -16,7 +16,7 @@ class ErrorWithStatus extends Error {
 
   toPlainSocketErrorObject() {
     return {
-      data: this.status,
+      data: this.message,
       status: this.status,
       result: this.result,
       errMessage: this.message,

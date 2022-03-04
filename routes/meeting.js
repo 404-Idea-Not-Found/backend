@@ -9,7 +9,7 @@ const {
   reserveMeeting,
   cancelReservation,
 } = require("../controller/meeting");
-const verify404Token = require("../middlewares/verify404Token");
+const verify404Token = require("../middlewares/express/verify404Token");
 
 router.get("/meeting-list", sendMeetingList);
 router.get("/:meetingId", sendMeeting);
