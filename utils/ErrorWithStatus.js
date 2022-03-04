@@ -19,7 +19,7 @@ class ErrorWithStatus extends Error {
       data: this.message,
       status: this.status,
       result: this.result,
-      errMessage: this.message,
+      errorMessage: this.message,
     };
   }
 }
