@@ -8,19 +8,27 @@ function handleConnection(socket) {
     `Socket ID ${socket.id} connected and joined room ${socket.meetingId}`
   );
   socket.on("disconnect", async () => {
-    if (socket.isOwner) {
-      await Meeting.findByIdAndUpdate(socket.meetingId, {
-        ownerSocketId: null,
-      });
+    try {
+      if (socket.isOwner) {
+        await Meeting.findByIdAndUpdate(socket.meetingId, {
+          ownerSocketId: null,
+        });
+      }
+
+      if (socket.userId) {
+        await User.findByIdAndUpdate(socket.userId, { currentSocketId: null });
+      }
+
+      socket
+        .to(socket.ownerSocketId)
+        .emit("participantDisconnected", socket.id);
+
+      console.log(`Socket ID ${socket.id} disconnected!!!`);
+    } catch (error) {
+      console.log(
+        "Socket failed to gracefully disconnect. Some socket related DB fields might be outdated"
+      );
     }
-
-    if (socket.userId) {
-      await User.findByIdAndUpdate(socket.userId, { currentSocketId: null });
-    }
-
-    socket.to(socket.ownerSocketId).emit("participantDisconnected", socket.id);
-
-    console.log(`Socket ID ${socket.id} disconnected!!!`);
   });
 }
 

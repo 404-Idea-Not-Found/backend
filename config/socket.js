@@ -3,6 +3,7 @@ const io = require("socket.io")();
 
 const checkDB = require("../middlewares/socket/checkDB");
 const handleCanvasEvent = require("./socketEventHandlers/handleCanvasEvent");
+const handleChatEvent = require("./socketEventHandlers/handleChatEvent");
 const handleConnection = require("./socketEventHandlers/handleConnection");
 const handleControlPanelEvent = require("./socketEventHandlers/handleControlPanelEvent");
 
@@ -15,6 +16,7 @@ io.on("connection", (socket) => {
   handleConnection(socket);
   handleCanvasEvent(socket);
   handleControlPanelEvent(socket);
+  handleChatEvent(socket);
 });
 
 module.exports = socketAPI;
