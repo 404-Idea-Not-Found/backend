@@ -55,3 +55,7 @@ exports.removeUserReservation = async (email, meetingId) => {
     $pull: { reservation: email },
   });
 };
+
+exports.endMeeting = async (meetingId) => {
+  await Meeting.findByIdAndUpdate(meetingId, { isEnd: true, isLive: false });
+};

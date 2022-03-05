@@ -15,7 +15,7 @@ async function checkDB(socket, next) {
     socket.ownerSocketId = meeting.ownerSocketId;
 
     if (isOwner === "true") {
-      await meeting.update({ ownerSocketId: socket.id });
+      await meeting.update({ ownerSocketId: socket.id, isLive: true });
       socket.isOwner = true;
       socket.ownerSocketId = socket.id;
     }
