@@ -8,6 +8,7 @@ const {
   createNewMeeting,
   reserveMeeting,
   cancelReservation,
+  terminateMeeting,
 } = require("../controller/meeting");
 const verify404Token = require("../middlewares/express/verify404Token");
 
@@ -16,6 +17,7 @@ router.get("/:meetingId", sendMeeting);
 
 router.post("/new-meeting", verify404Token, createNewMeeting);
 router.post("/reservation/:meetingId", verify404Token, reserveMeeting);
+router.post("/termination/:meetingId", verify404Token, terminateMeeting);
 
 router.patch("/reservation/:meetingId", verify404Token, cancelReservation);
 

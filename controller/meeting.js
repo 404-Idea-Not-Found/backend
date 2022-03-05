@@ -5,6 +5,7 @@ const {
   createMeeting,
   addUserReservation,
   removeUserReservation,
+  endMeeting,
 } = require("../service/meeting");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
@@ -103,6 +104,27 @@ exports.cancelReservation = async (req, res, next) => {
 
   try {
     await removeUserReservation(req.userInfo.email, meetingId);
+
+    res.json({
+      result: RESPONSE_RESULT.OK,
+    });
+  } catch (error) {
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+      )
+    );
+  }
+};
+
+exports.terminateMeeting = async (req, res, next) => {
+  const { meetingId } = req.params;
+
+  try {
+    await endMeeting(meetingId);
 
     res.json({
       result: RESPONSE_RESULT.OK,
