@@ -6,6 +6,7 @@ const handleCanvasEvent = require("./socketEventHandlers/handleCanvasEvent");
 const handleChatEvent = require("./socketEventHandlers/handleChatEvent");
 const handleConnection = require("./socketEventHandlers/handleConnection");
 const handleControlPanelEvent = require("./socketEventHandlers/handleControlPanelEvent");
+const handleWebRtcEvent = require("./socketEventHandlers/handleWebRtcEvent");
 
 const socketAPI = {
   io: io,
@@ -17,6 +18,7 @@ io.on("connection", (socket) => {
   handleCanvasEvent(socket);
   handleControlPanelEvent(socket);
   handleChatEvent(socket);
+  handleWebRtcEvent(socket);
 });
 
 module.exports = socketAPI;
