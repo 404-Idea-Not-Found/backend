@@ -10,22 +10,14 @@ function handleConnection(socket) {
   socket.on("disconnect", async () => {
     try {
       if (socket.isOwner) {
-        console.log("커밋하기전에 이거 꼭 살려야함.");
-        // await Meeting.findByIdAndUpdate(socket.meetingId, {
-        //   ownerSocketId: null,
-        //   isLive: false,
-        //   isEnd: true,
-        // });
-
-        console.log("커밋하기전에 이거 꼭 지워야함.");
         await Meeting.findByIdAndUpdate(socket.meetingId, {
           ownerSocketId: null,
           isLive: false,
+          isEnd: true,
         });
 
-        console.log("커밋하기전에 이거 꼭 살려야함.");
-        // socket.broadcast.to(socket.meetingId).emit("ownerDisconnected");
-        // return;
+        socket.broadcast.to(socket.meetingId).emit("ownerDisconnected");
+        return;
       }
 
       if (socket.userId) {
