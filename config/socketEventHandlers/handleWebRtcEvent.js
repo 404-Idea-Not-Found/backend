@@ -1,16 +1,14 @@
 /* eslint-disable no-console */
 function handleWebRtcEvent(socket) {
-  socket.on("requestOwnerVideo", async (signal) => {
-    console.log("be row", socket.id);
-    socket.to(socket.ownerSocketId).emit("ownerVideoRequested", {
-      requestorSignal: signal,
-      requestorSocketId: socket.id,
+  socket.on("requestVideo", (signal) => {
+    socket.to(socket.ownerSocketId).emit("requestVideo", {
+      signal,
+      from: socket.id,
     });
   });
 
-  socket.on("acceptOwnerVideoRequest", ({ signal, requestorSocketId }) => {
-    console.log("acceptOwnerVideoRequest", requestorSocketId);
-    socket.to(requestorSocketId).emit("ownerVideoRequestAccepted", signal);
+  socket.on("acceptCall", ({ signal, caller }) => {
+    socket.to(caller).emit("callAccepted", signal);
   });
 }
 
