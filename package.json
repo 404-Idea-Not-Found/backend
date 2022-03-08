@@ -6,7 +6,6 @@
     "start": "node ./bin/www",
     "dev": "NODE_ENV=development nodemon ./bin/www",
     "prod": "NODE_ENV=production nodemon ./bin/www",
-    "prepare": "husky install",
     "test": "NODE_ENV=test mocha test/**/*.test.js --watch --require ./test/hooks.js"
   },
   "dependencies": {
