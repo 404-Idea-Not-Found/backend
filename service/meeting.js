@@ -114,3 +114,7 @@ exports.removeUserReservation = async (email, meetingId) => {
 exports.endMeeting = async (meetingId) => {
   await Meeting.findByIdAndUpdate(meetingId, { isEnd: true, isLive: false });
 };
+
+exports.deleteMeeting = async (meetingId) => {
+  return await Meeting.findByIdAndDelete(meetingId);
+};

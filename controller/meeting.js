@@ -1,4 +1,4 @@
-const { createMailJob } = require("../api/mailJobAPI");
+const { createMailJob, deleteMailJob } = require("../api/mailJobAPI");
 const {
   getMeetingList,
   getMeeting,
@@ -7,6 +7,7 @@ const {
   addUserReservation,
   removeUserReservation,
   endMeeting,
+  deleteMeeting,
 } = require("../service/meeting");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorwithStatus");
@@ -161,5 +162,28 @@ exports.terminateMeeting = async (req, res, next) => {
         ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
       )
     );
+  }
+};
+
+exports.cancelMeeting = async (req, res, next) => {
+  const { meetingId } = req.params;
+  const { fourOFourToken } = req.userInfo;
+
+  try {
+    const deletedMeeting = await deleteMeeting(meetingId);
+    await deleteMailJob(
+      meetingId,
+      deletedMeeting.title,
+      deletedMeeting.reservation,
+      fourOFourToken
+    );
+
+    res.json({
+      result: RESPONSE_RESULT.OK,
+    });
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+
+    next(new ErrorWithStatus(error, 500, RESPONSE_RESULT.ERROR, errorMessage));
   }
 };
