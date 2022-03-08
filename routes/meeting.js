@@ -9,10 +9,12 @@ const {
   reserveMeeting,
   cancelReservation,
   terminateMeeting,
+  sendMyPageMeeting,
 } = require("../controller/meeting");
 const verify404Token = require("../middlewares/express/verify404Token");
 
 router.get("/meeting-list", sendMeetingList);
+router.get("/my-page", verify404Token, sendMyPageMeeting);
 router.get("/:meetingId", sendMeeting);
 
 router.post("/new-meeting", verify404Token, createNewMeeting);

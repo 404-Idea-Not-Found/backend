@@ -1,7 +1,7 @@
 const User = require("../model/User");
 
 exports.checkUser = async (email) => {
-  return await User.findOne({ email });
+  return await User.findOne({ email }).lean();
 };
 
 exports.createUser = async (verificationResult) => {

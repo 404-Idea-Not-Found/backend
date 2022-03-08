@@ -1,7 +1,6 @@
 const { default: mongoose } = require("mongoose");
 
 const Meeting = require("../../model/Meeting");
-const User = require("../../model/User");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../../utils/constants");
 const ErrorWithStatus = require("../../utils/ErrorwithStatus");
 
@@ -21,7 +20,6 @@ async function checkDB(socket, next) {
     }
 
     if (mongoose.isValidObjectId(userId)) {
-      await User.findByIdAndUpdate(userId, { currentSocketId: socket.id });
       socket.userId = userId;
     }
 

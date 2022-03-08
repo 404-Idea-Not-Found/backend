@@ -34,9 +34,6 @@ const meetingSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  ownerSocketId: {
-    type: String,
-  },
   reservation: {
     type: [
       {
@@ -66,9 +63,6 @@ const meetingSchema = new mongoose.Schema({
   chatList: {
     type: [chatSchema],
     default: [],
-  },
-  doodle: {
-    type: String,
   },
   isLive: {
     type: Boolean,
