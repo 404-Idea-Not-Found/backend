@@ -27,3 +27,30 @@ exports.createMailJob = async (meetingId, startTime, fourOFourToken) => {
     throw new Error(errorMessage);
   }
 };
+
+exports.deleteMailJob = async (
+  meetingId,
+  deletedMeetingTitle,
+  deletedMeetingReservation,
+  fourOFourToken
+) => {
+  try {
+    await axios.post(
+      `/mail-job/deletion/${meetingId}`,
+      {
+        meetingId,
+        deletedMeetingTitle,
+        deletedMeetingReservation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${fourOFourToken}`,
+        },
+      }
+    );
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+
+    throw new Error(errorMessage);
+  }
+};
