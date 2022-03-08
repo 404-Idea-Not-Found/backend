@@ -72,6 +72,9 @@ const meetingSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  ownerSocketId: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Meeting", meetingSchema);
