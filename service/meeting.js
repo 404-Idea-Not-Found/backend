@@ -11,7 +11,7 @@ exports.getMeetingList = async (query, lastId) => {
       ],
     })
       .sort({ _id: 1 })
-      .select("-reservation -chatList -doodle -description")
+      .select("-reservation -chatList -description")
       .limit(10)
       .lean();
   }
@@ -24,7 +24,7 @@ exports.getMeetingList = async (query, lastId) => {
     ],
   })
     .sort({ _id: 1 })
-    .select("-reservation -chatList -doodle -description")
+    .select("-reservation -chatList -description")
     .limit(10)
     .lean();
 };
@@ -39,7 +39,7 @@ exports.getMyPageMeeting = async (userId, email) => {
       { owner: userId, isEnd: false },
       { owner: userId, isEnd: true },
       {
-        reservation: email,
+        reservation: { $in: email },
         isEnd: false,
       },
       {
@@ -66,20 +66,29 @@ exports.getMyPageMeeting = async (userId, email) => {
 
     if (String(meeting.owner) === userId && meeting.isEnd) {
       catagorizedMyPageMeeting.pastMeeting.push(meeting);
+    }
+
+    if (
+      meeting.colleague.length &&
+      meeting.isEnd &&
+      String(meeting.owner) === userId
+    ) {
+      catagorizedMyPageMeeting.participatingProject.push(meeting);
       continue;
     }
 
-    if (meeting.reservation.includes("email") && !meeting.isEnd) {
+    if (meeting.reservation.includes(email) && !meeting.isEnd) {
       catagorizedMyPageMeeting.reservedMeeting.push(meeting);
       continue;
     }
 
-    const isColleague = meeting.colleague.some((colleague) => {
-      colleague._id === userId;
-    });
+    const isColleague = meeting.colleague.some(
+      (colleague) => String(colleague._id) === userId
+    );
 
     if (isColleague && meeting.isEnd) {
       catagorizedMyPageMeeting.participatingProject.push(meeting);
+      continue;
     }
   }
 
