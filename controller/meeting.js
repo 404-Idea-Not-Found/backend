@@ -2,6 +2,7 @@ const { createMailJob } = require("../api/mailJobAPI");
 const {
   getMeetingList,
   getMeeting,
+  getMyPageMeeting,
   createMeeting,
   addUserReservation,
   removeUserReservation,
@@ -42,6 +43,28 @@ exports.sendMeeting = async (req, res, next) => {
     res.json({
       result: RESPONSE_RESULT.OK,
       meeting,
+    });
+  } catch (error) {
+    next(
+      new ErrorWithStatus(
+        error,
+        500,
+        RESPONSE_RESULT.ERROR,
+        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+      )
+    );
+  }
+};
+
+exports.sendMyPageMeeting = async (req, res, next) => {
+  const { userId, email } = req.query;
+
+  try {
+    const catagorizedMyPageMeeting = await getMyPageMeeting(userId, email);
+
+    res.json({
+      resut: RESPONSE_RESULT.OK,
+      catagorizedMyPageMeeting,
     });
   } catch (error) {
     next(
