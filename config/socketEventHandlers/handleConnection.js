@@ -1,7 +1,7 @@
+/* eslint-disable no-console */
 const Meeting = require("../../model/Meeting");
 const User = require("../../model/User");
 
-/* eslint-disable no-console */
 function handleConnection(socket) {
   socket.join(socket.meetingId);
   console.log(
@@ -31,7 +31,7 @@ function handleConnection(socket) {
       console.log(`❌Socket ID ${socket.id} disconnected!!!❌`);
     } catch (error) {
       console.log(
-        "Socket failed to gracefully disconnect. Some socket related DB fields might be outdated"
+        "Socket failed to gracefully disconnect. Some socket related DB fields might be outdated."
       );
     }
   });
