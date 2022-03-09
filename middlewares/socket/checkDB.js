@@ -2,7 +2,7 @@ const { default: mongoose } = require("mongoose");
 
 const Meeting = require("../../model/Meeting");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../../utils/constants");
-const ErrorWithStatus = require("../../utils/ErrorwithStatus");
+const ErrorWithStatus = require("../../utils/ErrorWithStatus");
 
 async function checkDB(socket, next) {
   const { room, isOwner, userId } = socket.handshake.query;

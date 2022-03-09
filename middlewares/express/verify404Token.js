@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 const User = require("../../model/User");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../../utils/constants");
-const ErrorWithStatus = require("../../utils/ErrorwithStatus");
+const ErrorWithStatus = require("../../utils/ErrorWithStatus");
 
 const verify404Token = async (req, res, next) => {
   const { authorization } = req.headers;

@@ -1,6 +1,6 @@
 const Meeting = require("../../model/Meeting");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../../utils/constants");
-const ErrorWithStatus = require("../../utils/ErrorwithStatus");
+const ErrorWithStatus = require("../../utils/ErrorWithStatus");
 
 function handleChatEvent(socket) {
   socket.on("chatSubmitted", async (chat) => {

@@ -1,6 +1,6 @@
 const Meeting = require("../model/Meeting");
 
-exports.getMeetingList = async (query, lastId) => {
+exports.getMeetingList = async (query = "", lastId) => {
   if (lastId !== "firstQuery") {
     return await Meeting.find({
       _id: { $gt: lastId },
