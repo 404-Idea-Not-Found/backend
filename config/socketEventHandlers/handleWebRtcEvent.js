@@ -2,7 +2,7 @@
 function handleWebRtcEvent(socket) {
   socket.on("requestVideo", (signal) => {
     socket.to(socket.ownerSocketId).emit("requestVideo", {
-      signal,
+      callerSignal: signal,
       from: socket.id,
     });
   });
