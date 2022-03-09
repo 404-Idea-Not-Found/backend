@@ -10,7 +10,7 @@ const {
   deleteMeeting,
 } = require("../service/meeting");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
-const ErrorWithStatus = require("../utils/ErrorwithStatus");
+const ErrorWithStatus = require("../utils/ErrorWithStatus");
 const getErrorMessage = require("../utils/getErrorMessage");
 
 exports.sendMeetingList = async (req, res, next) => {
