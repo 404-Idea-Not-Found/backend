@@ -13,7 +13,7 @@ const helmet = require("helmet");
 const logger = require("morgan");
 
 const authRouter = require("./routes/auth");
-const indexRouter = require("./routes/index");
+const fallbackRouter = require("./routes/fallback");
 const meetingRouter = require("./routes/meeting");
 
 const corsOptions = {
@@ -31,9 +31,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
 
-app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/meeting", meetingRouter);
+app.use("*", fallbackRouter);
 
 app.use(function (error, req, res, next) {
   res.status(error.status || 500);
