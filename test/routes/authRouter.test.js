@@ -1,5 +1,8 @@
 const expect = require("chai").expect;
 const jwt = require("jsonwebtoken");
+const httpMocks = require("node-mocks-http");
+const proxyquire = require("proxyquire");
+const sinon = require("sinon");
 const request = require("supertest");
 
 const app = require("../../app");
@@ -86,6 +89,66 @@ describe("/verify-404-token", () => {
       expect(response.body.result).to.equal(RESPONSE_RESULT.ERROR);
       expect(response.body.errorMessage).to.equal(
         ERROR_MESSAGES.FAILED_TO_VERIFY_TOKEN
+      );
+    });
+  });
+});
+
+describe("/google", () => {
+  describe("success", () => {
+    let request = httpMocks.createRequest({
+      method: "POST",
+      url: "/auth/google",
+    });
+    let response = httpMocks.createResponse();
+    let fakeExpressNext = sinon.fake((error) => {
+      response.statusCode = error.status;
+      response.json();
+    });
+
+    afterEach(function () {
+      request = httpMocks.createRequest({
+        method: "POST",
+        url: "/auth/google",
+      });
+      response = httpMocks.createResponse();
+      fakeExpressNext = sinon.fake((error) => {
+        response.statusCode = error.status;
+        response.errorMessage = error.message;
+      });
+    });
+
+    it("should success with valid firebase authentication", async () => {
+      const validUserEmail = mockUserList[0].email;
+      const firebaseStub = sinon.stub().returns({
+        verifyIdToken: sinon.stub().returns({
+          email: validUserEmail,
+        }),
+      });
+      const googleAuth = proxyquire("../../controller/auth", {
+        "firebase-admin/auth": { getAuth: firebaseStub },
+      }).googleAuth;
+
+      await googleAuth(request, response);
+      expect(response._getStatusCode()).to.equal(200);
+      expect(response._getJSONData().result).to.equal(RESPONSE_RESULT.OK);
+      expect(response._getJSONData().email).to.equal(validUserEmail);
+    });
+
+    it("should fail when firebase authentication fails", async () => {
+      const testError = "helloError";
+      const firebaseStub = sinon.stub().returns({
+        verifyIdToken: sinon.stub().rejects(new Error(testError)),
+      });
+
+      const googleAuth = proxyquire("../../controller/auth", {
+        "firebase-admin/auth": { getAuth: firebaseStub },
+      }).googleAuth;
+
+      await googleAuth(request, response, fakeExpressNext);
+      expect(response.statusCode).to.equal(500);
+      expect(response.errorMessage).to.equal(
+        ERROR_MESSAGES.FAILED_TO_AUTHENTICATE_WITH_GOOGLE
       );
     });
   });
