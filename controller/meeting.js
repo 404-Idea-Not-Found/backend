@@ -97,8 +97,16 @@ exports.createNewMeeting = async (req, res, next) => {
     });
   } catch (error) {
     const errorMessage = getErrorMessage(error);
+    const statusCode = error.message.includes("validation") ? 400 : 500;
 
-    next(new ErrorWithStatus(error, 500, RESPONSE_RESULT.ERROR, errorMessage));
+    next(
+      new ErrorWithStatus(
+        error,
+        statusCode,
+        RESPONSE_RESULT.ERROR,
+        errorMessage
+      )
+    );
   }
 };
 

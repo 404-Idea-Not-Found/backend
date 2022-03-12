@@ -103,7 +103,7 @@ describe("/google", () => {
     let response = httpMocks.createResponse();
     let fakeExpressNext = sinon.fake((error) => {
       response.statusCode = error.status;
-      response.json();
+      response.errorMessage = error.message;
     });
 
     afterEach(function () {

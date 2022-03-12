@@ -59,7 +59,7 @@ exports.mockMeetingList = [
       },
     ],
     isLive: false,
-    isEnd: true,
+    isEnd: false,
     ownerSocketId: null,
   },
 ];
@@ -85,3 +85,54 @@ exports.mockUserList = [
     currentSocketId: null,
   },
 ];
+
+exports.pastMeetingMock = {
+  _id: "621d02dc40cb39e0db59b340",
+  title: "지난미팅",
+  tag: ["저녁식사", "직장인"],
+  description:
+    "안녕하세요 저는 판교 직장인입니다. 제가 판교에 온지 얼마 되지 않아 어디서 저녁식사를 하면 가장 좋을지 생각이 안나요. 판교에서 저와 같이 최고의 맛집을 찾아 떠나실 미식가 분들을 찾습니다.",
+  owner: "621c5447d20d6d0d905e4f39",
+  reservation: [],
+  colleague: [],
+  recruitmentNumber: 6,
+  startTime: "2023-03-28T17:20:19",
+  chatList: [],
+  isLive: false,
+  isEnd: true,
+  ownerSocketId: null,
+};
+
+exports.reservedMeetingMock = {
+  _id: "621d02dc40cb39e0db59b341",
+  title: "예약미팅",
+  tag: ["저녁식사", "직장인"],
+  description:
+    "안녕하세요 저는 판교 직장인입니다. 제가 판교에 온지 얼마 되지 않아 어디서 저녁식사를 하면 가장 좋을지 생각이 안나요. 판교에서 저와 같이 최고의 맛집을 찾아 떠나실 미식가 분들을 찾습니다.",
+  owner: "6222cafc39eaaa1fa52c5d8c",
+  reservation: ["tester1@gmail.com"],
+  colleague: [],
+  recruitmentNumber: 6,
+  startTime: "2023-03-28T17:20:19",
+  chatList: [],
+  isLive: false,
+  isEnd: false,
+  ownerSocketId: null,
+};
+
+exports.participatingProjectMock = {
+  _id: "621d02dc40cb39e0db59b342",
+  title: "참가프로젝트",
+  tag: ["저녁식사", "직장인"],
+  description:
+    "안녕하세요 저는 판교 직장인입니다. 제가 판교에 온지 얼마 되지 않아 어디서 저녁식사를 하면 가장 좋을지 생각이 안나요. 판교에서 저와 같이 최고의 맛집을 찾아 떠나실 미식가 분들을 찾습니다.",
+  owner: "6222cafc39eaaa1fa52c5d8c",
+  reservation: [],
+  colleague: ["621c5447d20d6d0d905e4f39"],
+  recruitmentNumber: 6,
+  startTime: "2023-03-28T17:20:19",
+  chatList: [],
+  isLive: false,
+  isEnd: true,
+  ownerSocketId: null,
+};
