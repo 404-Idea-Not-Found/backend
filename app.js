@@ -2,7 +2,9 @@ require("dotenv").config();
 if (process.env.NODE_ENV !== "test") {
   require("./config/mongoose");
 }
-require("./config/firebase");
+if (process.env.NODE_ENV !== "test") {
+  require("./config/firebase");
+}
 
 const path = require("path");
 
