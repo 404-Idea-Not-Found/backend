@@ -17,6 +17,9 @@ mockUserList.map((user) => {
 exports.mochaHooks = {
   async beforeAll() {
     mongoose.connect(process.env.LOCAL_DB_URL);
+  },
+  async beforeEach() {
+    mongoose.connect(process.env.LOCAL_DB_URL);
 
     await Meeting.create(mockMeetingList);
     await User.create(mockUserList);
@@ -26,11 +29,11 @@ exports.mochaHooks = {
 
     for (const collectionName of collections) {
       if (collectionName === "meetings") {
-        await Meeting.deleteMany({ _id: { $nin: mockMeetingIdList } });
+        await Meeting.deleteMany();
       }
 
       if (collectionName === "users") {
-        await User.deleteMany({ _id: { $nin: mockUserIdList } });
+        await User.deleteMany();
       }
     }
   },
