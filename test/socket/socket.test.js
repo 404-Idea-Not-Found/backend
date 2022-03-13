@@ -212,6 +212,9 @@ describe("Socket", function () {
       ownerSocket.on("paintRequest", ({ username, requestorSocketId }) => {
         expect(username).to.equal(participantUsername);
         expect(requestorSocketId).to.equal(participantSocket.id);
+
+        ownerSocket.disconnect();
+        participantSocket.disconnect();
         done();
       });
 
@@ -298,6 +301,8 @@ describe("Socket", function () {
         );
 
         participantSocket.on("recruitFull", () => {
+          ownerSocket.disconnect();
+          participantSocket.disconnect();
           done();
         });
 
@@ -326,6 +331,8 @@ describe("Socket", function () {
         );
 
         participantSocket.on("kickedFromRecuitList", () => {
+          ownerSocket.disconnect();
+          participantSocket.disconnect();
           done();
         });
 
