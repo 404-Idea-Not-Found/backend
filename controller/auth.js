@@ -1,8 +1,10 @@
 const { getAuth } = require("firebase-admin/auth");
 
 const { checkUser, createUser } = require("../service/auth");
-const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
+const { RESPONSE_RESULT } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorWithStatus");
+const getErrorMessage = require("../utils/getErrorMessage");
+const getStatusCode = require("../utils/getStatusCode");
 const signToken = require("../utils/signToken");
 
 exports.googleAuth = async (req, res, next) => {
@@ -29,12 +31,15 @@ exports.googleAuth = async (req, res, next) => {
       _id: user._id,
     });
   } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
+
     next(
       new ErrorWithStatus(
         error,
-        500,
+        statusCode,
         RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_AUTHENTICATE_WITH_GOOGLE
+        errorMessage
       )
     );
   }

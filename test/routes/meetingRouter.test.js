@@ -6,6 +6,7 @@ const request = require("supertest");
 
 const app = require("../../app");
 const Meeting = require("../../model/Meeting");
+const User = require("../../model/User");
 const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../../utils/constants");
 const signToken = require("../../utils/signToken");
 const {
@@ -56,13 +57,13 @@ describe("/meeting", () => {
         expect(response.body.meetingList).to.eql([]);
       });
 
-      it("should throw error when db error happened", async () => {
+      it("should throw error with wrong input", async () => {
         const wrongId = "wrongId";
         const response = await request(app).get(
           `/meeting/meeting-list?lastId=${wrongId}`
         );
 
-        expect(response.status).to.equal(500);
+        expect(response.status).to.equal(400);
         expect(response.body.result).to.equal(RESPONSE_RESULT.ERROR);
         expect(response.body.errorMessage).to.equal(
           ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
@@ -106,7 +107,7 @@ describe("/meeting", () => {
           .get(`/meeting/my-page?userId=${wrongUserID}`)
           .set("Authorization", `Bearer ${validToken}`);
 
-        expect(response.status).to.equal(500);
+        expect(response.status).to.equal(400);
         expect(response.body.result).to.equal(RESPONSE_RESULT.ERROR);
         expect(response.body.errorMessage).to.equal(
           ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
@@ -124,10 +125,10 @@ describe("/meeting", () => {
         expect(response.body.meeting._id).to.equal(mockId);
       });
 
-      it("should fails with the wrong id", async () => {
+      it("should fail with the wrong id", async () => {
         const response = await request(app).get("/meeting/wrongId");
 
-        expect(response.status).to.equal(500);
+        expect(response.status).to.equal(400);
         expect(response.body.result).to.equal(RESPONSE_RESULT.ERROR);
         expect(response.body.errorMessage).to.equal(
           ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
@@ -160,10 +161,11 @@ describe("/meeting", () => {
     describe("/new-meeting", () => {
       it("should create new meeting when provided with right input", async () => {
         const mockId = mockMeetingList[0]._id;
-        const testTitle = "testTitle";
+        const testTitle = "testTitletest";
+        const fakeCreateMailJob = sinon.fake();
         const createNewMeeting = proxyquire("../../controller/meeting", {
           "../api/mailJobAPI": {
-            createMailJob: () => {},
+            createMailJob: fakeCreateMailJob,
           },
         }).createNewMeeting;
         const mockMeetingData = {
@@ -179,9 +181,14 @@ describe("/meeting", () => {
 
         await createNewMeeting(mockRequest, mockResponse);
 
+        const createdMeeting = await Meeting.findOne({ title: testTitle });
+
         expect(mockResponse._getStatusCode()).to.equal(200);
         expect(mockResponse._getJSONData().createdMeeting.title).to.equal(
           testTitle
+        );
+        expect(fakeCreateMailJob.getCall(0).firstArg).to.eql(
+          createdMeeting._id
         );
       });
 
@@ -211,6 +218,168 @@ describe("/meeting", () => {
           ERROR_MESSAGES.FAILED_TO_VALIDATE_DB_FIELD
         );
       });
+    });
+
+    describe("/reservation/:meetingId", () => {
+      it("should reserve meeting when provided with right input", async () => {
+        const testId = mockMeetingList[0]._id;
+        const response = await request(app)
+          .post(`/meeting/reservation/${testId}`)
+          .set("Authorization", `Bearer ${validToken}`);
+
+        expect(response.statusCode).to.equal(200);
+      });
+
+      it("should not reserve meeting when provided with wrong input", async () => {
+        const wrongId = "wrongId";
+        const response = await request(app)
+          .post(`/meeting/reservation/${wrongId}`)
+          .set("Authorization", `Bearer ${validToken}`);
+
+        expect(response.statusCode).to.equal(400);
+        expect(response.body.errorMessage).to.equal(
+          ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        );
+      });
+    });
+
+    describe("/termination/:meetingId", () => {
+      it("should terminate meetingwhen provided with right input", async () => {
+        const testId = mockMeetingList[0]._id;
+        const response = await request(app)
+          .post(`/meeting/termination/${testId}`)
+          .set("Authorization", `Bearer ${validToken}`);
+
+        const terminatedMeeting = await Meeting.findById(testId);
+
+        expect(response.statusCode).to.equal(200);
+        expect(terminatedMeeting.isEnd).to.equal(true);
+      });
+
+      it("should not terminate meeting when provided with wrong input", async () => {
+        const wrongId = "wrongId";
+        const response = await request(app)
+          .post(`/meeting/termination/${wrongId}`)
+          .set("Authorization", `Bearer ${validToken}`);
+
+        expect(response.statusCode).to.equal(400);
+        expect(response.body.errorMessage).to.equal(
+          ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        );
+      });
+    });
+  });
+
+  describe("PATCH", () => {
+    describe("/reservation/:meetingId", () => {
+      it("should cancel reservation when provided with right input", async () => {
+        const testId = mockMeetingList[0]._id;
+        const testEmail = "thisIsTestEmail@thisIsTestEmail.com";
+        const createdUser = await User.create({
+          username: "tester",
+          email: testEmail,
+        });
+        const validToken = signToken(createdUser._id);
+
+        const reservedMeeting = await Meeting.findByIdAndUpdate(
+          testId,
+          {
+            $push: { reservation: testEmail },
+          },
+          { new: true }
+        );
+
+        expect(reservedMeeting.reservation).to.include(testEmail);
+
+        const response = await request(app)
+          .patch(`/meeting/reservation/${testId}`)
+          .set("Authorization", `Bearer ${validToken}`);
+
+        const updatedMeeting = await Meeting.findById(testId);
+
+        expect(response.statusCode).to.equal(200);
+        expect(updatedMeeting.reservation).not.to.include(testEmail);
+      });
+
+      it("should not cancel reservation when provided with right input", async () => {
+        const wrongId = "wrongId";
+        const response = await request(app)
+          .patch(`/meeting/reservation/${wrongId}`)
+          .set("Authorization", `Bearer ${validToken}`);
+
+        expect(response.statusCode).to.equal(400);
+        expect(response.body.errorMessage).to.equal(
+          ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        );
+      });
+    });
+  });
+
+  describe("DELETE", () => {
+    let mockRequest = httpMocks.createRequest({
+      method: "DELETE",
+    });
+    let mockResponse = httpMocks.createResponse();
+    let fakeExpressNext = sinon.fake((error) => {
+      mockResponse.statusCode = error.status;
+      mockResponse.errorMessage = error.message;
+    });
+
+    afterEach(function () {
+      mockRequest = httpMocks.createRequest({
+        method: "DELETE",
+      });
+      mockResponse = httpMocks.createResponse();
+      fakeExpressNext = sinon.fake((error) => {
+        mockResponse.statusCode = error.status;
+        mockResponse.errorMessage = error.message;
+      });
+    });
+
+    describe("/:meetingId", () => {
+      it("should delete meeting when provided with right input", async () => {
+        const testId = mockMeetingList[0]._id;
+        const fakeDeleteMailJob = sinon.fake();
+        const cancelMeeting = proxyquire("../../controller/meeting", {
+          "../api/mailJobAPI": {
+            deleteMailJob: fakeDeleteMailJob,
+          },
+        }).cancelMeeting;
+        const existingMeeting = await Meeting.findById(testId);
+
+        expect(String(existingMeeting._id)).to.equal(testId);
+
+        mockRequest.params = { meetingId: testId };
+        mockRequest.userInfo = { fourOFourToken: "testToken" };
+
+        await cancelMeeting(mockRequest, mockResponse);
+
+        const deletedMeeting = await Meeting.findById(testId);
+
+        expect(mockResponse._getStatusCode()).to.equal(200);
+        expect(deletedMeeting).to.equal(null);
+        expect(fakeDeleteMailJob.getCall(0).firstArg).to.equal(testId);
+      });
+    });
+
+    it("should not delete meeting when provided with wrong input", async () => {
+      const testId = "wrongId";
+      const fakeDeleteMailJob = sinon.fake();
+      const cancelMeeting = proxyquire("../../controller/meeting", {
+        "../api/mailJobAPI": {
+          deleteMailJob: fakeDeleteMailJob,
+        },
+      }).cancelMeeting;
+
+      mockRequest.params = { meetingId: testId };
+      mockRequest.userInfo = { fourOFourToken: "testToken" };
+
+      await cancelMeeting(mockRequest, mockResponse, fakeExpressNext);
+
+      expect(mockResponse.statusCode).to.equal(400);
+      expect(mockResponse.errorMessage).to.equal(
+        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+      );
     });
   });
 });

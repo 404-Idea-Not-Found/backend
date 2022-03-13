@@ -15,6 +15,10 @@ function getErrorMessage(error) {
     return error.response.data.errorMessage;
   }
 
+  if (error.message.includes("firebase")) {
+    return ERROR_MESSAGES.FAILED_TO_AUTHENTICATE_WITH_GOOGLE;
+  }
+
   return error.message;
 }
 

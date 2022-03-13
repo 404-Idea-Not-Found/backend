@@ -136,7 +136,7 @@ describe("/google", () => {
     });
 
     it("should fail when firebase authentication fails", async () => {
-      const testError = "helloError";
+      const testError = "hello firebase Error";
       const firebaseStub = sinon.stub().returns({
         verifyIdToken: sinon.stub().rejects(new Error(testError)),
       });
