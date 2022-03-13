@@ -64,7 +64,9 @@ const verify404Token = async (req, res, next) => {
 
     if (isMongooseError) {
       errorMessage = ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB;
-      statusCode = 500;
+      statusCode = error.message.includes("Cast to ObjectId failed")
+        ? 404
+        : 500;
     }
 
     next(

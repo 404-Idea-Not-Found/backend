@@ -4,6 +4,7 @@ const User = require("../../model/User");
 
 function handleConnection(socket) {
   socket.join(socket.meetingId);
+  socket.emit("join", socket.meetingId);
   console.log(
     `✅Socket ID ${socket.id} connected and joined room ${socket.meetingId}✅`
   );

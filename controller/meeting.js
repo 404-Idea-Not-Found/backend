@@ -9,9 +9,10 @@ const {
   endMeeting,
   deleteMeeting,
 } = require("../service/meeting");
-const { RESPONSE_RESULT, ERROR_MESSAGES } = require("../utils/constants");
+const { RESPONSE_RESULT } = require("../utils/constants");
 const ErrorWithStatus = require("../utils/ErrorWithStatus");
 const getErrorMessage = require("../utils/getErrorMessage");
+const getStatusCode = require("../utils/getStatusCode");
 
 exports.sendMeetingList = async (req, res, next) => {
   const { query, lastId } = req.query;
@@ -24,12 +25,15 @@ exports.sendMeetingList = async (req, res, next) => {
       meetingList,
     });
   } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
+
     next(
       new ErrorWithStatus(
         error,
-        500,
+        statusCode,
         RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        errorMessage
       )
     );
   }
@@ -46,12 +50,15 @@ exports.sendMeeting = async (req, res, next) => {
       meeting,
     });
   } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
+
     next(
       new ErrorWithStatus(
         error,
-        500,
+        statusCode,
         RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        errorMessage
       )
     );
   }
@@ -68,12 +75,15 @@ exports.sendMyPageMeeting = async (req, res, next) => {
       catagorizedMyPageMeeting,
     });
   } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
+
     next(
       new ErrorWithStatus(
         error,
-        500,
+        statusCode,
         RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        errorMessage
       )
     );
   }
@@ -97,8 +107,16 @@ exports.createNewMeeting = async (req, res, next) => {
     });
   } catch (error) {
     const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
 
-    next(new ErrorWithStatus(error, 500, RESPONSE_RESULT.ERROR, errorMessage));
+    next(
+      new ErrorWithStatus(
+        error,
+        statusCode,
+        RESPONSE_RESULT.ERROR,
+        errorMessage
+      )
+    );
   }
 };
 
@@ -112,12 +130,15 @@ exports.reserveMeeting = async (req, res, next) => {
       result: RESPONSE_RESULT.OK,
     });
   } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
+
     next(
       new ErrorWithStatus(
         error,
-        500,
+        statusCode,
         RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        errorMessage
       )
     );
   }
@@ -133,12 +154,15 @@ exports.cancelReservation = async (req, res, next) => {
       result: RESPONSE_RESULT.OK,
     });
   } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
+
     next(
       new ErrorWithStatus(
         error,
-        500,
+        statusCode,
         RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        errorMessage
       )
     );
   }
@@ -154,12 +178,15 @@ exports.terminateMeeting = async (req, res, next) => {
       result: RESPONSE_RESULT.OK,
     });
   } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
+
     next(
       new ErrorWithStatus(
         error,
-        500,
+        statusCode,
         RESPONSE_RESULT.ERROR,
-        ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        errorMessage
       )
     );
   }
@@ -183,7 +210,15 @@ exports.cancelMeeting = async (req, res, next) => {
     });
   } catch (error) {
     const errorMessage = getErrorMessage(error);
+    const statusCode = getStatusCode(error);
 
-    next(new ErrorWithStatus(error, 500, RESPONSE_RESULT.ERROR, errorMessage));
+    next(
+      new ErrorWithStatus(
+        error,
+        statusCode,
+        RESPONSE_RESULT.ERROR,
+        errorMessage
+      )
+    );
   }
 };

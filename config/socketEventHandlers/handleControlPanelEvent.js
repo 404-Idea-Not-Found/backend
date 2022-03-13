@@ -40,7 +40,7 @@ function handleControlPanelEvent(socket) {
       try {
         const meeting = await Meeting.findById(socket.meetingId);
 
-        if (meeting.colleague.length <= meeting.recruitmentNumber) {
+        if (meeting.colleague.length < meeting.recruitmentNumber) {
           await meeting.update({
             $addToSet: { colleague: socket.userId },
           });
@@ -49,6 +49,8 @@ function handleControlPanelEvent(socket) {
             userId: socket.userId,
             requestorSocketId: socket.id,
           });
+        } else {
+          socket.emit("recruitFull");
         }
       } catch (error) {
         socket.emit(
@@ -69,13 +71,25 @@ function handleControlPanelEvent(socket) {
   });
 
   socket.on("kickRecruit", async ({ socketId, userId }) => {
-    await Meeting.findByIdAndUpdate(socket.meetingId, {
-      $pull: {
-        colleague: userId,
-      },
-    });
+    try {
+      await Meeting.findByIdAndUpdate(socket.meetingId, {
+        $pull: {
+          colleague: userId,
+        },
+      });
 
-    socket.to(socketId).emit("kickedFromRecuitList");
+      socket.to(socketId).emit("kickedFromRecuitList");
+    } catch (error) {
+      socket.emit(
+        "DBError",
+        new ErrorWithStatus(
+          error,
+          500,
+          RESPONSE_RESULT.ERROR,
+          ERROR_MESSAGES.FAILED_TO_COMMUNICATE_WITH_DB
+        )
+      );
+    }
   });
 }
 
