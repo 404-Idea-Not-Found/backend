@@ -14,7 +14,11 @@
 
 ![landingPage](./.github/landingPage.png "landingPage")
 
-- deploy: https://www.404-idea-not-found.com/
+- Deploy: https://www.404-idea-not-found.com/
+- Mockup: https://bit.ly/3wBrcfm
+- DB Schema Modeling: https://bit.ly/3JEwuL1
+- 기술검증: https://bit.ly/3wDetZI
+- 칸반 스케줄: https://bit.ly/3IDnzYO
 
 ## 📎 프로젝트 기획
 부트캠프 개인 프로젝트 기간이 되었는데 계속해서 무엇을 만들어야 할지 아이디어가 생각나지 않았습니다. 뭔가 기발하고 독창적인 것을 만들어야겠다는 목표는 있었지만, 무엇이 좋을지 머리를 쥐어 싸고 고민해봐도 아무런 결정을 내리지 못했습니다... 프로젝트 아이디어 모집 기간이 단 3일 남았을 때 까지도 계속 결정을 못 하다가 떠올렸습니다.
